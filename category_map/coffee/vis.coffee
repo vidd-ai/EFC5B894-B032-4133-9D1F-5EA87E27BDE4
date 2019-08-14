@@ -531,6 +531,10 @@ $ ->
     .on "change", () ->
       if $("#input_files").is(":checked")
         user = getParams()['u']
+        mobile = getParams()['m']
         summary_type = 'File';
-        window.location.href = "../viewer.html?v=segSummary.html&u=" + user + '&c=' + summary_type;
+        if mobile == true
+          window.location.href = "../segSummary.html?u=" + user + '&c=' + summary_type;
+        else
+          window.location.href = "../viewer.html?v=segSummary.html&u=" + user + '&c=' + summary_type;
 
