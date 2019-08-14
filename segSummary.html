@@ -233,7 +233,6 @@ function flatten(root) {
     var m = false;
     if (detectmob()) {
        m = true;
-    alert('in change,mobile');
     }
     if (summary_type.match(/cat/i)) {
       summary_type = 'File';
@@ -244,10 +243,8 @@ function flatten(root) {
       }
     } else {
       summary_type = 'Cat';
- alert('changing to Cat');
       if (m) {
          s = "category_map/index.html?u=" + user + '&c=' + summary_type + '&m='+ m;
-    alert('mobile, s='+s);
       } else {
          s = "viewer.html?v=category_map/index.html&u=" + user + '&c=' + summary_type;
       }

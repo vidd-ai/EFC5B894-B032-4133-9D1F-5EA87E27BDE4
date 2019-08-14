@@ -354,11 +354,9 @@ Bubbles = () ->
     d3.event.preventDefault()
     user = getParams()['u']
     mobile = getParams()['m']
-    alert('in coffee, mobile ='+mobile)
     summary_type = getParams()['c']
     location = 'catView.html';
     if mobile
-      alert('in coffee, mobile')
       url = "../" + location + "?u=" + user + "&c=" + summary_type + '&l=' + idValue(d).split(' ').join('_').toLowerCase()
     else
       url = "../viewer.html?v=" + location + "&u=" + user + "&c=" + summary_type + '&l=' + idValue(d).split(' ').join('_').toLowerCase()
