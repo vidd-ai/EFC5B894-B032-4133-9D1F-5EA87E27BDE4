@@ -356,7 +356,8 @@ Bubbles = () ->
     mobile = getParams()['m']
     summary_type = getParams()['c']
     location = 'catView.html';
-    if mobile
+    if mobile == true
+      alert('in coffee, mobile')
       url = "../" + location + "?u=" + user + "&c=" + summary_type + '&l=' + idValue(d).split(' ').join('_').toLowerCase()
     else
       url = "../viewer.html?v=" + location + "&u=" + user + "&c=" + summary_type + '&l=' + idValue(d).split(' ').join('_').toLowerCase()
