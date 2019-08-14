@@ -74,10 +74,11 @@ var c = getUrlVars()['c'];
   }
   a.src = full_url;
   if (detectmob()) {
-alert('mobile, src:'+a.src);
      a.style.height = "100%";
      a.style.overflow = "hidden";
+     a.style.display = "block";
      a.scrolling = "no";
+alert('mobile, src:'+a.src);
   }
 </script>
 
