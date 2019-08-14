@@ -534,7 +534,7 @@ $ ->
         user = getParams()['u']
         mobile = getParams()['m']
         summary_type = 'File';
-        if mobile == true
+        if mobile
           window.location.href = "../segSummary.html?u=" + user + '&c=' + summary_type;
         else
           window.location.href = "../viewer.html?v=segSummary.html&u=" + user + '&c=' + summary_type;
