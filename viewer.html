@@ -47,12 +47,6 @@ var v = getUrlVars()['v'];
 var c = getUrlVars()['c'];
 </script>
 <script>
-  if (detectmob()) {
-alert('mobile');
-     $("#iframe_a").style.height = "100%";
-     $("#iframe_a").style.overflow = "hidden";
-     $("#iframe_a").scrolling = "no";
-  }
   var a = document.getElementById('iframe_a');
   var full_url = v + "?u=" + user;
   var title = 'your Vidd.ai';
@@ -79,6 +73,12 @@ alert('mobile');
     full_url += "&d=" + demo;
   }
   a.src = full_url;
+  if (detectmob()) {
+alert('mobile, src:'+a.src);
+     a.style.height = "100%";
+     a.style.overflow = "hidden";
+     a.scrolling = "no";
+  }
 </script>
 
 </html>
