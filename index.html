@@ -7,7 +7,28 @@
 <script src="js/jquery.min.js"></script>
 <script>
  var user='EFC5B894-B032-4133-9D1F-5EA87E27BDE4';
- window.location="viewer.html?v=segSummary.html&u=" + user + '&c=File';
+
+ function detectmob() {
+ if( navigator.userAgent.match(/Android/i)
+ || navigator.userAgent.match(/webOS/i)
+ || navigator.userAgent.match(/iPhone/i)
+ || navigator.userAgent.match(/iPad/i)
+ || navigator.userAgent.match(/iPod/i)
+ || navigator.userAgent.match(/BlackBerry/i)
+ || navigator.userAgent.match(/Windows Phone/i)
+ ){
+    return true;
+  }
+ else {
+    return false;
+  }
+ }
+
+ if (detectmob()) {
+   window.location="segSummary.html?u=" + user + '&c=File';
+ } else {
+   window.location="viewer.html?v=segSummary.html&u=" + user + '&c=File';
+ }
 </script>
 </body>
 </html>
