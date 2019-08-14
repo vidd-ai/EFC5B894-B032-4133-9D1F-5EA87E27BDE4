@@ -231,22 +231,25 @@ function flatten(root) {
     var s, m = False;
     if (detectmob()) {
        m = True;
+    alert('mobile');
     }
     if (summary_type.match(/cat/i)) {
       summary_type = 'File';
-      s = "segSummary.html&u=" + user + '&c=' + summary_type;
+      if (m) {
+         s = "segSummary.html?u=" + user + '&c=' + summary_type;
+      } else {
+         s = "viewer.html?v=segSummary.html&u=" + user + '&c=' + summary_type;
+      }
     } else {
       summary_type = 'Cat';
       if (m) {
-         m = '&m=' + m;
+         s = "category_map/index.html?u=" + user + '&c=' + summary_type + '&m='+ m;
+      } else {
+         s = "viewer.html?v=category_map/index.html&u=" + user + '&c=' + summary_type;
       }
-      s = "category_map/index.html&u=" + user + '&c=' + summary_type + m;
     }
-    //if (m) {
-      //window.location.href = s;
-    //} else {
-      window.location.href = "viewer.html?v=" + s;
-    //}
+    window.location.href = s;
+    //window.location.href = "viewer.html?v=" + s;
   }
 
 </script>
