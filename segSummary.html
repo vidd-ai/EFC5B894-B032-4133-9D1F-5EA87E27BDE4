@@ -238,15 +238,15 @@ function flatten(root) {
     } else {
       summary_type = 'Cat';
       if (m) {
-         m = '&m';
+         m = '&m=' + m;
       }
       s = "category_map/index.html&u=" + user + '&c=' + summary_type + m;
     }
-    if (m) {
-      window.location.href = s;
-    } else {
+    //if (m) {
+      //window.location.href = s;
+    //} else {
       window.location.href = "viewer.html?v=" + s;
-    }
+    //}
   }
 
 </script>
