@@ -353,9 +353,13 @@ Bubbles = () ->
   click = (d) ->
     d3.event.preventDefault()
     user = getParams()['u']
+    mobile = getParams()['m']
     summary_type = getParams()['c']
     location = 'catView.html';
-    url = "../viewer.html?v=" + location + "&u=" + user + "&c=" + summary_type + '&l=' + idValue(d).split(' ').join('_').toLowerCase()
+    if mobile
+      url = "../" + location + "?u=" + user + "&c=" + summary_type + '&l=' + idValue(d).split(' ').join('_').toLowerCase()
+    else
+      url = "../viewer.html?v=" + location + "&u=" + user + "&c=" + summary_type + '&l=' + idValue(d).split(' ').join('_').toLowerCase()
     #window.open(encodeURI(url));
     window.open(url);
 

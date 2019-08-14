@@ -228,15 +228,25 @@ function flatten(root) {
   d3.selectAll("input")
       .on("change", change);
   function change() {
-    var s;
+    var s, m = False;
+    if (detectmob()) {
+       m = True;
+    }
     if (summary_type.match(/cat/i)) {
       summary_type = 'File';
       s = "segSummary.html&u=" + user + '&c=' + summary_type;
     } else {
       summary_type = 'Cat';
-      s = "category_map/index.html&u=" + user + '&c=' + summary_type;
+      if (m) {
+         m = '&m';
+      }
+      s = "category_map/index.html&u=" + user + '&c=' + summary_type + m;
     }
-    window.location.href = "viewer.html?v=" + s;
+    if (m) {
+      window.location.href = s;
+    } else {
+      window.location.href = "viewer.html?v=" + s;
+    }
   }
 
 </script>
