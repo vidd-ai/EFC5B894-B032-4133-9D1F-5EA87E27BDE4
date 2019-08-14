@@ -48,8 +48,9 @@ var c = getUrlVars()['c'];
 </script>
 <script>
   if (detectmob()) {
-     iframe.style.width = iframe.style.height = "100%";
-     iframe.style.overflow = "hidden";
+     $("#iframe_a").style.height = "100%";
+     $("#iframe_a").style.overflow = "hidden";
+     $("#iframe_a").scrolling = "no";
   }
   var a = document.getElementById('iframe_a');
   var full_url = v + "?u=" + user;
