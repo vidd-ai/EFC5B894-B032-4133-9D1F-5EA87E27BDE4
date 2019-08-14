@@ -229,10 +229,11 @@ function flatten(root) {
   d3.selectAll("input")
       .on("change", change);
   function change() {
-    var s, m = False;
+    var s;
+    var m = false;
     if (detectmob()) {
-       m = True;
-    alert('mobile');
+       m = true;
+    alert('in change,mobile');
     }
     if (summary_type.match(/cat/i)) {
       summary_type = 'File';
@@ -243,6 +244,7 @@ function flatten(root) {
       }
     } else {
       summary_type = 'Cat';
+ alert('changing to Cat');
       if (m) {
          s = "category_map/index.html?u=" + user + '&c=' + summary_type + '&m='+ m;
     alert('mobile, s='+s);
