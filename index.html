@@ -24,11 +24,20 @@
   }
  }
 
+/*
  if (detectmob()) {
    window.location="segSummary.html?u=" + user + '&c=File';
  } else {
    window.location="viewer.html?v=segSummary.html&u=" + user + '&c=File';
  }
+*/
+ var summary_type = 'Cat';
+ if (detectmob()) {
+    s = "category_map/index.html?u=" + user + '&c=' + summary_type + '&m='+ m;
+ } else {
+    s = "viewer.html?v=category_map/index.html&u=" + user + '&c=' + summary_type;
+ }
+ window.location=s;
 </script>
 </body>
 </html>
