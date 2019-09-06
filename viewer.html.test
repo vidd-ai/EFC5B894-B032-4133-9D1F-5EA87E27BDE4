@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<header>
+<script src="js/jquery.min.js"></script>
+</header>
+
+<body>
+  <div>
+<!--
+    <iframe id="iframe_a" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="" frameBorder="0" marginwidth="0" marginheight="0" style="width:100%; height:800px;" scrolling="no"></iframe>
+-->
+    <iframe id="iframe_a" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="" frameBorder="0" marginwidth="0" marginheight="0" style="width:100%; height:800px;"></iframe>
+  </div>
+</body>
+
+<script>
+
+function detectmob() { 
+ if( navigator.userAgent.match(/Android/i)
+ || navigator.userAgent.match(/webOS/i)
+ || navigator.userAgent.match(/iPhone/i)
+ || navigator.userAgent.match(/iPad/i)
+ || navigator.userAgent.match(/iPod/i)
+ || navigator.userAgent.match(/BlackBerry/i)
+ || navigator.userAgent.match(/Windows Phone/i)
+ ){
+    return true;
+  }
+ else {
+    return false;
+  }
+}
+
+function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+    return vars;
+}
+
+var fn = getUrlVars()['fn'];
+var user = getUrlVars()['u'];
+var demo = getUrlVars()['d'];
+var label = getUrlVars()['l'];
+var v = getUrlVars()['v'];
+var c = getUrlVars()['c'];
+</script>
+<script>
+  var a = document.getElementById('iframe_a');
+  var full_url = v + "?u=" + user;
+  var title = 'your Vidd.ai';
+  if (c.match(/file/i)) {
+    title = title + ' file map';
+  }
+  if (c.match(/cat/i)) {
+    title = title + ' category map for ' + label;
+  }
+  if (v.match(/segView/g)) {
+    title = title + ' segment map for ' + fn;
+  }
+  document.title = title;
+  if (label) {
+    full_url += "&l=" + label;
+  }
+  if (fn) {
+    full_url += "&fn=" + fn;
+  }
+  if (c) {
+    full_url += "&c=" + c;
+  }
+  if (demo) {
+    full_url += "&d=" + demo;
+  }
+  a.src = full_url;
+  if (detectmob()) {
+     a.style.height = "400px";
+     a.style.overflow = "hidden";
+     a.style.display = "block";
+     a.scrolling = "no";
+alert('mobile, src:'+a.src);
+  }
+</script>
+
+</html>
