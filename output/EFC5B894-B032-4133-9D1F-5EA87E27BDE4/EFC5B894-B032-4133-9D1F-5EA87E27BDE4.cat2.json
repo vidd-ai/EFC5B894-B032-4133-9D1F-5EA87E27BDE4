@@ -2,22 +2,36 @@
 "frags": {
 "nodes": [
 {"atom": 0, "group": 0, "image_address": "output/EFC5B894-B032-4133-9D1F-5EA87E27BDE4/lbsfunny2.mp4/000.gif", "name": "0.0.95", "image_width": 53, "image_height": 30, "HasFace": false, "sec_start": 0.0, "sec_end": 3.17, "sec_len": 3.17, "clip_len": 95},
-{"atom": 1, "group": 2, "image_address": "output/EFC5B894-B032-4133-9D1F-5EA87E27BDE4/GX012053.MP4/000.gif", "name": "0.2.461", "image_width": 53, "image_height": 30, "HasFace": false, "sec_start": 0.0, "sec_end": 3.84, "sec_len": 3.84, "clip_len": 461},
+{"atom": 9, "group": 0, "image_address": "https://vidd-ai.github.io/85D424B8-AE70-4902-AD21-389AD10A7C71/output/85D424B8-AE70-4902-AD21-389AD10A7C71/viddaisamplecsgo.mp4/009.gif", "name": "0.0.95", "image_width": 53, "image_height": 30, "HasFace": false, "sec_start": 0.0, "sec_end": 3.17, "sec_len": 3.17, "clip_len": 95},
+{"atom": 3, "group": 0, "image_address": "https://vidd-ai.github.io/c87431fe-de82-4ed6-b484-923f57ada801/output/c87431fe-de82-4ed6-b484-923f57ada801/20190706104256.mp4/003.gif", "name": "0.0.95", "image_width": 53, "image_height": 30, "HasFace": false, "sec_start": 0.0, "sec_end": 3.17, "sec_len": 3.17, "clip_len": 95},
+{"atom": 7, "group": 0, "image_address": "https://vidd-ai.github.io/c87431fe-de82-4ed6-b484-923f57ada801/output/c87431fe-de82-4ed6-b484-923f57ada801/20190706104256.mp4/007.gif", "name": "0.0.95", "image_width": 53, "image_height": 30, "HasFace": false, "sec_start": 0.0, "sec_end": 3.17, "sec_len": 3.17, "clip_len": 95},
+{"atom": 9, "group": 0, "image_address": "https://vidd-ai.github.io/c87431fe-de82-4ed6-b484-923f57ada801/output/c87431fe-de82-4ed6-b484-923f57ada801/20190706104256.mp4/009.gif", "name": "0.0.95", "image_width": 53, "image_height": 30, "HasFace": false, "sec_start": 0.0, "sec_end": 3.17, "sec_len": 3.17, "clip_len": 95},
+{"atom": 12, "group": 0, "image_address": "https://vidd-ai.github.io/c87431fe-de82-4ed6-b484-923f57ada801/output/c87431fe-de82-4ed6-b484-923f57ada801/20190706104256.mp4/012.gif", "name": "0.0.95", "image_width": 53, "image_height": 30, "HasFace": false, "sec_start": 0.0, "sec_end": 3.17, "sec_len": 3.17, "clip_len": 95},
+{"atom": 13, "group": 0, "image_address": "https://vidd-ai.github.io/c87431fe-de82-4ed6-b484-923f57ada801/output/c87431fe-de82-4ed6-b484-923f57ada801/20190706104256.mp4/013.gif", "name": "0.0.95", "image_width": 53, "image_height": 30, "HasFace": false, "sec_start": 0.0, "sec_end": 3.17, "sec_len": 3.17, "clip_len": 95},
+{"atom": 2, "group": 0, "image_address": "https://vidd-ai.github.io/c87431fe-de82-4ed6-b484-923f57ada801/output/c87431fe-de82-4ed6-b484-923f57ada801/test.20190706105352.mp4/002.gif", "name": "0.0.95", "image_width": 53, "image_height": 30, "HasFace": false, "sec_start": 0.0, "sec_end": 3.17, "sec_len": 3.17, "clip_len": 95},
+{"atom": 21, "group": 0, "image_address": "https://vidd-ai.github.io/c87431fe-de82-4ed6-b484-923f57ada801/output/c87431fe-de82-4ed6-b484-923f57ada801/test.20190706105352.mp4/021.gif", "name": "0.0.95", "image_width": 53, "image_height": 30, "HasFace": false, "sec_start": 0.0, "sec_end": 3.17, "sec_len": 3.17, "clip_len": 95},
 {"atom": 9, "group": 0, "image_address": "output/EFC5B894-B032-4133-9D1F-5EA87E27BDE4/PLAYERUNKNOWNSBATTLEGROUNDS2019021021093969DVR.mp4/009.gif", "name": "0.0.95", "image_width": 53, "image_height": 30, "HasFace": false, "sec_start": 0.0, "sec_end": 3.17, "sec_len": 3.17, "clip_len": 95}
 ], "links": [] },
-"whats_new": {
+"new_stuff": {
 "nodes": [
 {"atom": 0, "group": 0, "image_address": "output/EFC5B894-B032-4133-9D1F-5EA87E27BDE4/lbsfunny2.mp4/000.gif", "name": "0.0.95", "image_width": 53, "image_height": 30, "HasFace": false, "sec_start": 0.0, "sec_end": 3.17, "sec_len": 3.17, "clip_len": 95},
 {"atom": 1, "group": 2, "image_address": "output/EFC5B894-B032-4133-9D1F-5EA87E27BDE4/GX012053.MP4/000.gif", "name": "0.2.461", "image_width": 53, "image_height": 30, "HasFace": false, "sec_start": 0.0, "sec_end": 3.84, "sec_len": 3.84, "clip_len": 461},
 {"atom": 9, "group": 0, "image_address": "output/EFC5B894-B032-4133-9D1F-5EA87E27BDE4/PLAYERUNKNOWNSBATTLEGROUNDS2019021021093969DVR.mp4/009.gif", "name": "0.0.95", "image_width": 53, "image_height": 30, "HasFace": false, "sec_start": 0.0, "sec_end": 3.17, "sec_len": 3.17, "clip_len": 95}
 ], "links": [] },
-"haha": {
+"bloopers": {
+"nodes": [
+{"atom": 32, "group": 0, "image_address": "https://vidd-ai.github.io/c87431fe-de82-4ed6-b484-923f57ada801/output/c87431fe-de82-4ed6-b484-923f57ada801/test.20190706105352.mp4/032.gif", "name": "0.0.95", "image_width": 53, "image_height": 30, "HasFace": false, "sec_start": 0.0, "sec_end": 3.17, "sec_len": 3.17, "clip_len": 95},
+{"atom": 0, "group": 0, "image_address": "output/EFC5B894-B032-4133-9D1F-5EA87E27BDE4/lbsfunny2.mp4/000.gif", "name": "0.0.95", "image_width": 53, "image_height": 30, "HasFace": false, "sec_start": 0.0, "sec_end": 3.17, "sec_len": 3.17, "clip_len": 95},
+{"atom": 9, "group": 0, "image_address": "output/EFC5B894-B032-4133-9D1F-5EA87E27BDE4/PLAYERUNKNOWNSBATTLEGROUNDS2019021021093969DVR.mp4/005.gif", "name": "0.0.95", "image_width": 53, "image_height": 30, "HasFace": false, "sec_start": 0.0, "sec_end": 3.17, "sec_len": 3.17, "clip_len": 95},
+{"atom": 9, "group": 0, "image_address": "output/EFC5B894-B032-4133-9D1F-5EA87E27BDE4/PLAYERUNKNOWNSBATTLEGROUNDS2019021021093969DVR.mp4/006.gif", "name": "0.0.95", "image_width": 53, "image_height": 30, "HasFace": false, "sec_start": 0.0, "sec_end": 3.17, "sec_len": 3.17, "clip_len": 95}
+], "links": [] },
+"funnies": {
 "nodes": [
 {"atom": 0, "group": 0, "image_address": "output/EFC5B894-B032-4133-9D1F-5EA87E27BDE4/lbsfunny2.mp4/000.gif", "name": "0.0.95", "image_width": 53, "image_height": 30, "HasFace": false, "sec_start": 0.0, "sec_end": 3.17, "sec_len": 3.17, "clip_len": 95},
 {"atom": 9, "group": 0, "image_address": "output/EFC5B894-B032-4133-9D1F-5EA87E27BDE4/PLAYERUNKNOWNSBATTLEGROUNDS2019021021093969DVR.mp4/005.gif", "name": "0.0.95", "image_width": 53, "image_height": 30, "HasFace": false, "sec_start": 0.0, "sec_end": 3.17, "sec_len": 3.17, "clip_len": 95},
 {"atom": 9, "group": 0, "image_address": "output/EFC5B894-B032-4133-9D1F-5EA87E27BDE4/PLAYERUNKNOWNSBATTLEGROUNDS2019021021093969DVR.mp4/006.gif", "name": "0.0.95", "image_width": 53, "image_height": 30, "HasFace": false, "sec_start": 0.0, "sec_end": 3.17, "sec_len": 3.17, "clip_len": 95}
 ], "links": [] },
-"whos_new": {
+"newcomers": {
 "nodes": [
 {"atom": 0, "group": 0, "image_address": "output/EFC5B894-B032-4133-9D1F-5EA87E27BDE4/lbsfunny2.mp4/000.gif", "name": "0.0.95", "image_width": 53, "image_height": 30, "HasFace": false, "sec_start": 0.0, "sec_end": 3.17, "sec_len": 3.17, "clip_len": 95},
 {"atom": 9, "group": 0, "image_address": "output/EFC5B894-B032-4133-9D1F-5EA87E27BDE4/PLAYERUNKNOWNSBATTLEGROUNDS2019021021093969DVR.mp4/009.gif", "name": "0.0.95", "image_width": 53, "image_height": 30, "HasFace": false, "sec_start": 0.0, "sec_end": 3.17, "sec_len": 3.17, "clip_len": 95}
