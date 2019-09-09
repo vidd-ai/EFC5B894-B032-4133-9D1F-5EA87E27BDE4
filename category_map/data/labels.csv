@@ -1,8 +1,10 @@
 name,count,label
-Child,25,child
+Frags,30,frags
+New Stuff,30,whats_new
+Funnies,20,haha
+Bloopers,20,haha
+Newcomers,40,whos_new
 Product,15,product
-Bathtub,10,bathtub
-Bathing,15,bathing
 Facial expression,6,facial_expression
 Skin,5,skin
 Cheek,6,cheek
@@ -32,7 +34,6 @@ Musical instrument,1,musical_instrument
 Pianist,1,pianist
 Electronic instrument,1,electronic_instrument
 Medley swimming,3,medley_swimming
-Leisure centre,11,leisure_centre
 Swimming,13,swimming
 Swimming pool,12,swimming_pool
 Leisure,3,leisure
