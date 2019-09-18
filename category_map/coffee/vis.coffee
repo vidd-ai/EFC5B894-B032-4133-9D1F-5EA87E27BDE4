@@ -353,13 +353,9 @@ Bubbles = () ->
   click = (d) ->
     d3.event.preventDefault()
     user = getParams()['u']
-    mobile = getParams()['m']
     summary_type = getParams()['c']
     location = 'catView.html';
-    if mobile
-      url = "../" + location + "?u=" + user + "&c=" + summary_type + '&l=' + idValue(d).split(' ').join('_').toLowerCase()
-    else
-      url = "../viewer.html?v=" + location + "&u=" + user + "&c=" + summary_type + '&l=' + idValue(d).split(' ').join('_').toLowerCase()
+    url = "../viewer.html?v=" + location + "&u=" + user + "&c=" + summary_type + '&l=' + idValue(d).split(' ').join('_').toLowerCase()
     #window.open(encodeURI(url));
     window.open(url);
 
@@ -530,10 +526,6 @@ $ ->
     .on "change", () ->
       if $("#input_files").is(":checked")
         user = getParams()['u']
-        mobile = getParams()['m']
         summary_type = 'File';
-        if mobile
-          window.location.href = "../segSummary.html?u=" + user + '&c=' + summary_type;
-        else
-          window.location.href = "../viewer.html?v=segSummary.html&u=" + user + '&c=' + summary_type;
+        window.location.href = "../viewer.html?v=segSummary.html&u=" + user + '&c=' + summary_type;
 
