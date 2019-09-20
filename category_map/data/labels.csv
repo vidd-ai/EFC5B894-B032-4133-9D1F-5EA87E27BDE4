@@ -1,19 +1,19 @@
 name,count,label
-Product,28,product
 Play,20,play
-Child,46,child
 Toddler,27,toddler
+Product,28,product
+Child,46,child
+Face,10,face
+Cheek,9,cheek
+Facial expression,11,facial_expression
+Nose,10,nose
 Baby,9,baby
 Skin,6,skin
-Nose,10,nose
-Cheek,9,cheek
-Face,10,face
-Facial expression,11,facial_expression
 Toy,1,toy
 Fun,6,fun
-Leisure,9,leisure
 Water,5,water
 Swimming pool,16,swimming_pool
+Leisure,9,leisure
 Bathing,18,bathing
 Inflatable,5,inflatable
 Games,5,games
@@ -25,10 +25,10 @@ Kindergarten,2,kindergarten
 Leisure centre,12,leisure_centre
 Birthday,2,birthday
 Eating,5,eating
-Graduation,9,graduation
 Event,2,event
-Academic dress,8,academic_dress
 Mortarboard,6,mortarboard
+Academic dress,8,academic_dress
+Graduation,9,graduation
 School,1,school
 Scholar,2,scholar
 Clothing,1,clothing
@@ -36,30 +36,30 @@ Classroom,1,classroom
 Music,4,music
 Class,1,class
 Head,6,head
+Table,1,table
 Furniture,1,furniture
 Couch,2,couch
-Table,1,table
-Photograph,8,photograph
 Hardwood,2,hardwood
 Floor,8,floor
+Photograph,8,photograph
 Flooring,5,flooring
 Meal,1,meal
-Purple,1,purple
 Violet,1,violet
+Purple,1,purple
 Pianist,2,pianist
 Cake decorating,3,cake_decorating
-Junk food,1,junk_food
-Cake,3,cake
 Food,1,food
+Junk food,1,junk_food
 Birthday cake,1,birthday_cake
+Cake,3,cake
 Alcohol,1,alcohol
 Snapshot,1,snapshot
 Musical instrument,2,musical_instrument
 Buttercream,1,buttercream
 Lip,1,lip
 Chin,1,chin
-Eyebrow,2,eyebrow
 Forehead,3,forehead
+Eyebrow,2,eyebrow
 Bathtub,10,bathtub
 Hair,6,hair
 Ball,1,ball
@@ -67,24 +67,24 @@ Crawling,1,crawling
 People,1,people
 Black,2,black
 Shoulder,1,shoulder
-Keyboard,1,keyboard
 Electronic instrument,1,electronic_instrument
-Musical keyboard,1,musical_keyboard
 Piano,1,piano
-Medley swimming,3,medley_swimming
+Musical keyboard,1,musical_keyboard
+Keyboard,1,keyboard
 Swimming,13,swimming
+Medley swimming,3,medley_swimming
 Barechested,1,barechested
 Breaststroke,1,breaststroke
 Swimmer,1,swimmer
 Recreation,1,recreation
 Lawn,1,lawn
-Geological phenomenon,1,geological_phenomenon
-Freezing,1,freezing
 Snow,2,snow
+Freezing,1,freezing
+Geological phenomenon,1,geological_phenomenon
 Winter,1,winter
 Skiing,1,skiing
 Tree,1,tree
-Ceiling,1,ceiling
 White,1,white
+Ceiling,1,ceiling
 IG,77,ig
 FB,8,fb
