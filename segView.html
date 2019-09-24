@@ -85,11 +85,27 @@ function getUrlVars() {
 }
 
 var demo = 'no';
-var fn = getUrlVars()['fn'];
+var fn;
 var user = getUrlVars()['u'];
 var select_str = '# mpv EDL v0;';  // as required by EDL file syntax as first line, may not need dangling ;
 demo = getUrlVars()['d'];
-document.title = "your Vidd.ai segment map - " + fn;
+
+var summary_type = getUrlVars()['c'];
+var label = '';
+var json_fn = '';
+switch(summary_type) {
+  case 'Cat':
+    label = getUrlVars()['l'];
+    document.title = "your Vidd.ai category map - " + label;
+    json_fn = 'output/' + user + '/' + user + '.cat2.json';
+    //console.log('Cat, label:',label, ' json_fn:',json_fn);
+    break;
+  default:
+    fn = getUrlVars()['fn'];
+    json_fn = 'output/' + user + '/' + fn + '/d3.json';
+    document.title = "your Vidd.ai segment map - " + fn;
+    // code block
+} 
 var select_set = new Set();
 
 if (demo == 'demo') {
@@ -101,7 +117,8 @@ var svg = d3.select("#graphDiv").append("svg")
     .attr("height", height);
 
 
-var json_fn = 'output/' + user + '/' + fn + '/d3.json';
+//var json_fn = 'output/' + user + '/' + fn + '/d3.json';
+
 
 // read user json file
 d3.json(json_fn, function(error, json) {
@@ -109,29 +126,29 @@ d3.json(json_fn, function(error, json) {
 
   in_graph = json;
   //update('long', in_graph);
-  if (in_graph.hits) {
-    update('hits', in_graph);
-  } else {
-    update('vary', in_graph);
-  }
+  switch (summary_type) {
+    case 'Cat':
+      //console.log('ingraph now label');
+      update('label', in_graph);
+      break;
+    default:
+      if (in_graph.hits) {
+        update('hits', in_graph);
+      } else {
+        update('vary', in_graph);
+      }
+    }
 });
 
 function update(filter, in_graph) {
    var graph;
-/*
-   switch(filter) {
-        case 'short': graph = in_graph.short; break;
-        case 'all': graph = in_graph.all; break;
-        case 'vary': graph = in_graph.vary; break;
-        case 'long': graph = in_graph.long; break;
-        case 'selected': graph = in_graph; break;
-        default: graph = in_graph.long; break;
-   }
-*/
 
    switch(filter) {
         case 'short': graph = in_graph.short;
            $('#segFilter').fadeIn().html('Shortest ');
+           break;
+        case 'label': 
+           graph = in_graph[label];
            break;
         case 'all': graph = in_graph.all;
            $('#segFilter').fadeIn().html('All ');
@@ -322,11 +339,26 @@ function update(filter, in_graph) {
         selected_graph["links"] = [];
 
         $.getJSON(json_fn, function (data) {
+            var data_all = {};
+            switch(summary_type) {
+               case 'Cat':
+                 data_all = data[label];
+                 break;
+               default:
+                 data_all = data["all"];
+            }
+/*
             if (data["all"].length == 0) {
               console.log("reading d3.json file: Cannot find any nodes");
               return;
             }
             all_nodes = data["all"].nodes;
+*/
+            if (data_all.length == 0) {
+              console.log("reading json:", json_fn, ": Cannot find any nodes");
+              return;
+            }
+            all_nodes = data_all.nodes;
             console.log('all_nodes:',all_nodes);
             // show longish button if json entry
             if ("medium2" in data) {
@@ -356,7 +388,13 @@ function update(filter, in_graph) {
 	if (getUrlVars()['c'] == 'File') {
 		cat_or_file = 'File';
 	}
-       	$('#fileSummary').fadeIn().html('Segments in ' + cat_or_file + ": " + fn + "<br/>");
+        switch (summary_type) {
+           case 'Cat':
+              $('#fileSummary').fadeIn().html('segments in Category: ' + label + "<br/>");
+              break;
+           default:
+       	      $('#fileSummary').fadeIn().html('Segments in ' + cat_or_file + ": " + fn + "<br/>");
+        }
        	//$('#summaryPage').fadeIn().html('VIDD ' + cat_or_file + " map");
 
        	$('#long').on('click', function () {
@@ -381,6 +419,10 @@ function update(filter, in_graph) {
 
         $('#all').on('click', function () {
                 update('all', in_graph);
+            });
+
+        $('#label').on('click', function () {
+                update('label', in_graph);
             });
 
         $('#categoryMap').on('click', function () {
