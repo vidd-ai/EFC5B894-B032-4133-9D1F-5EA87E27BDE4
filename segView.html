@@ -390,7 +390,7 @@ function update(filter, in_graph) {
 	}
         switch (summary_type) {
            case 'Cat':
-              $('#fileSummary').fadeIn().html('segments in Category: ' + label + "<br/>");
+              $('#fileSummary').fadeIn().html('Highlight segments in category: ' + label + "<br/>");
               break;
            default:
        	      $('#fileSummary').fadeIn().html('Segments in ' + cat_or_file + ": " + fn + "<br/>");
@@ -434,7 +434,7 @@ function update(filter, in_graph) {
             });
 
         $('#VIDD').on('click', function () {
-            window.open ("https://vidd-ai.github.io/n-main/", '_blank');
+            window.open ("http://Vidd.ai/", '_blank');
             });
 
         d3.select('#NoFace').on('click', function () {
@@ -704,19 +704,19 @@ console.log('in writeTimeline, org_meta:',org_meta);
     <button id="NoFace">No Face</button>
     <button id="HasFace">Has Face</button>
 -->
-    <button id="vary">Suggested segments</button>
-    <button id="hits" style="display:none">Hits</button>
-    <button id="hits_maybe" style="display:none">Maybes</button>
-    <button id="long">Longest</button>
-    <button id="longish" style="display:none">Longish</button>
-    <button id="shortish" style="display:none">Shortish</button>
-    <button id="short">Shortest</button>
-    <button id="all">All</button>
+    <button id="vary" disabled>Suggested segments</button>
+    <button id="hits" disabled style="display:none">Hits</button>
+    <button id="hits_maybe" disabled style="display:none">Maybes</button>
+    <button id="long" disabled>Longest</button>
+    <button id="longish" disabled style="display:none">Longish</button>
+    <button id="shortish" disabled style="display:none">Shortish</button>
+    <button id="short" disabled>Shortest</button>
+    <button id="all" disabled>All</button>
     &nbsp;&nbsp;&nbsp;
     |
     &nbsp;&nbsp;&nbsp;
-    <button id="Selected" clase="btn btn-outline-light" data-toggle="button">Show selected</button>
-    <button id="Send">Save Selected</button>
+    <button id="Selected" disabled class="btn btn-outline-light" data-toggle="button">Show selected</button>
+    <button id="Send" disabled>Save Selected</button>
     <a class="btn btn-info" id="download_a" href="" download="filename.edl" style="display:none">Download</a>
     &nbsp;&nbsp;&nbsp;
     |
