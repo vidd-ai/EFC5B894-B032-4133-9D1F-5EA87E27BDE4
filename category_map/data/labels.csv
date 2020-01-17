@@ -1,6 +1,4 @@
 name,count,label
-Bathtub,10,bathtub
-Bathing,15,bathing
 Product,15,product
 Child,25,child
 Skin,5,skin
@@ -13,7 +11,6 @@ Forehead,2,forehead
 Nose,5,nose
 Head,2,head
 Eyebrow,1,eyebrow
-Toddler,11,toddler
 Hardwood,1,hardwood
 Floor,6,floor
 Flooring,3,flooring
@@ -36,7 +33,6 @@ Swimming,13,swimming
 Medley swimming,3,medley_swimming
 Swimming pool,12,swimming_pool
 Leisure,3,leisure
-Barechested,1,barechested
 Recreation,1,recreation
 Fun,1,fun
 Swimmer,1,swimmer
