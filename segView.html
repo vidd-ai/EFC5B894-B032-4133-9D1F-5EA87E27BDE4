@@ -129,6 +129,8 @@ d3.json(json_fn, function(error, json) {
   switch (summary_type) {
     case 'Cat':
       //console.log('ingraph now label');
+      update_atoms(in_graph[label]["nodes"]);
+      console.log ('new ingraph:',in_graph[label]);
       update('label', in_graph);
       break;
     default:
@@ -139,6 +141,13 @@ d3.json(json_fn, function(error, json) {
       }
     }
 });
+
+function update_atoms(in_nodes) {
+  for (i=0; i< in_nodes.length; i++) {
+      var n = in_nodes[i];
+      n["atom"] = i;
+  }
+}
 
 function update(filter, in_graph) {
    var graph;
@@ -172,6 +181,7 @@ function update(filter, in_graph) {
            $('#segFilter').fadeIn().html('Shortish ');
            break;
         case 'selected': graph = in_graph;
+console.log('case selected, in_graph:',graph);
            $('#segFilter').fadeIn().html('Selected ');
            break;
         default: graph = in_graph.long; break;
@@ -334,6 +344,9 @@ function update(filter, in_graph) {
     $(document).ready(function () {
         var selected_graph = {}, all_nodes = [];
         var org_meta = false;           // overload
+        var org_metas = {};
+	var grab_meta_called_times = 0;
+	var global_select_str_xml = '';
 
         selected_graph["nodes"] = [];
         selected_graph["links"] = [];
@@ -360,6 +373,16 @@ function update(filter, in_graph) {
             }
             all_nodes = data_all.nodes;
             console.log('all_nodes:',all_nodes);
+	    // remap "atom" to array position for summary_type = 'Cat'
+	    if (summary_type == 'Cat') {
+	      for (i=0; i< all_nodes.length; i++) {
+		var n = all_nodes[i];
+		n["atom"] = i;
+	      }
+	      //update();
+	    }
+            console.log('new all_nodes:',all_nodes);
+
             // show longish button if json entry
             if ("medium2" in data) {
                 $('#longish').show();
@@ -375,6 +398,7 @@ function update(filter, in_graph) {
             }
         })
 
+	// if cat_or_file is 'File', grab file metadata
 	var meta_fn = 'output/' + user + '/' + fn + '/meta.json';
         $.getJSON(meta_fn, function (data) {
             if ("fcpxml_meta" in data) {
@@ -399,6 +423,14 @@ function update(filter, in_graph) {
 
        	$('#long').on('click', function () {
                 update('long', in_graph);
+            });
+
+       	$('#longish').on('click', function () {
+                update('longish', in_graph);
+            });
+
+       	$('#shortish').on('click', function () {
+                update('shortish', in_graph);
             });
 
        	$('#short').on('click', function () {
@@ -462,13 +494,477 @@ function update(filter, in_graph) {
         d3.select('#Selected').on('click', function () {
            // convert select_set to a graph D3 recognizes so it can be redrawn on svg
            var x = [...select_set];
+	   console.log('selected_graph, x:',x);
+	   console.log('selected_graph, all_nodes:',all_nodes);
 	   selected_graph["nodes"] = [];
 	   for (var i = 0; i < x.length; i++) {
                 selected_graph["nodes"].push(all_nodes[x[i]]);
 	   }
-	   //console.log('selected_graph:',selected_graph["nodes"]);
+	   console.log('selected_graph:',selected_graph["nodes"]);
            update('selected', selected_graph);
         });
+
+
+	function grab_image_fn(image_address) {
+          var f = image_address.split("/");
+          var image_fn = f[2];
+	  return(image_fn);
+	}
+
+	function grab_meta(image_address) {
+	  var image_fn = grab_image_fn(image_address);
+	  var meta_fn = 'output/' + user + '/' + image_fn + '/meta.json';
+          $.getJSON(meta_fn, function (data) {
+
+	      // HACK: to keep track of how many times this getJSON is being called
+              grab_meta_called_times++;
+              if ("fcpxml_meta" in data) {
+		if (! org_metas[image_fn]) {
+                  org_metas[image_fn] = data["fcpxml_meta"];
+	      	  var meta = compute_meta(org_metas[image_fn], image_fn);
+	      	  var file_xml = assemble_file_xml(meta);
+                  org_metas[image_fn].file_xml = file_xml;
+                  if (grab_meta_called_times >= (selected_graph["nodes"].length - 1)) {
+			mergeXMLs();
+		  }
+                }
+	      }
+	  }); // .getJSON
+	}
+
+///
+	function compute_meta(meta, image_fn) {
+              // default settings for vidd_draft timelines
+              var _vidd_height = 1080;          // 1080p
+              var _vidd_width = 1920;
+              var _vidd_fps = 30;                       // 30 fps
+
+              // starting values for fcpxml sequence
+              prev_clip_end = -1;
+              fcpxml_offset = 108000; // equivalent of "3600/1s";
+              var f = meta.file_meta.file_fps.split("/");
+
+              var fps = (Number(f[0]) / Number(f[1])).toFixed(2);       // meta.file_fps expecting format "30000/1001" for 29.97 fps
+              var fps_m = 1;
+
+              var fps = Math.round(fps) * fps_m;
+
+              // grab fcpxml duration from nb_frames
+              meta.nb_frames = meta.file_meta.nb_frames;
+
+              meta.file_start_time = '0/1';             // default asset start_time
+
+              // overwrite asset start_frame from timecode if it's there
+              var start_frame = 0;
+              if ("file_timecode" in meta.file_meta) {
+                var t = meta.file_meta.file_timecode.toString().split(":");
+                var hr = Number(t[0]) * 108000;
+                var min = Number(t[1]) * 1800;
+                var sec = Number(t[2]) * 30;
+                start_frame = hr + min + sec + Number(t[3]);
+                meta.file_meta.file_start_time = (start_frame * fps_m).toString() + '/' + fps;
+              }
+	      meta.fps = fps;
+	      meta.image_fn = image_fn;
+	      return(meta);
+	}
+///
+	function assemble_file_xml(meta) {
+	    var org_file_info_xml_template = `
+								<!--- specify if first ref to file -->
+								<file id="file-_IMAGE_FN">
+									<pathurl>file://localhost_ORG_PATH/_ORG_FN_EXT</pathurl>
+									<rate>
+										<timebase>_ORG_FPS</timebase>
+									</rate>
+									<duration>_FILE_NUM_FRAMES</duration>
+									<timecode>
+										<rate>
+											<timebase>_ORG_FPS</timebase>
+										</rate>
+										<string>00:00:00:00</string>
+										<frame>0</frame>
+										<displayformat>NDF</displayformat>
+										<reel>
+											<name></name>
+										</reel>
+									</timecode>
+									<media>
+										<video>
+											<duration>_FILE_NUM_FRAMES</duration>
+											<samplecharacteristics>
+												<rate>
+													<timebase>_ORG_FPS</timebase>
+												</rate>
+												<width>_WIDTH</width>
+												<height>_HEIGHT</height>
+												<anamorphic>FALSE</anamorphic>
+												<pixelaspectratio>square</pixelaspectratio>
+												<fielddominance>none</fielddominance>
+											</samplecharacteristics>
+										</video>
+										<audio>
+											<samplecharacteristics>
+												<depth>16</depth>
+												<samplerate>44100</samplerate>
+											</samplecharacteristics>
+											<channelcount>2</channelcount>
+										</audio>
+									</media>
+								</file>
+`;
+	      org_file_info_xml = org_file_info_xml_template;
+              org_file_info_xml = org_file_info_xml.replace(/_IMAGE_FN/g, meta.image_fn);
+              org_file_info_xml = org_file_info_xml.replace(/_ORG_PATH/g, meta.path);
+              org_file_info_xml = org_file_info_xml.replace(/_ORG_FN_EXT/g, meta.fn_ext);
+	      org_file_info_xml = org_file_info_xml.replace(/_ORG_FPS/g, meta.fps);
+              org_file_info_xml = org_file_info_xml.replace(/_HEIGHT/g, meta.file_meta.height);
+              org_file_info_xml = org_file_info_xml.replace(/_WIDTH/g, meta.file_meta.width);
+              org_file_info_xml = org_file_info_xml.replace(/_FILE_NUM_FRAMES/g, meta.file_meta.nb_frames);
+	    //console.log('org_file_info_xml:',org_file_info_xml);
+	      return(org_file_info_xml);
+	}
+
+	function grabCatMetas(selected_nodes) {
+            // grab org_metas for each selected node
+            for (var i = 0; i < selected_nodes.length; i++) {
+	      console.log('grabCatMetas i:',i);
+              grab_meta(selected_graph["nodes"][i]["image_address"]);
+            }
+	}
+
+	function mergeXMLs() {
+	   //console.log('can mergeXMLs now');
+	   var select_str_xml = global_select_str_xml;
+	   for (var k in org_metas) {
+	     console.log('k:',k);
+             var not_first_file_str = '_NOT_FIRST_FILE_REF_' + k;
+	     //var file_id_ref_str = '<file id="file-51591KidsDanceSwim.mp4">'
+	     var file_id_ref_str = '<file id="file-' + k + '" />';
+	     //console.log('not_first_file_str:',not_first_file_str);
+             select_str_xml = select_str_xml.replace(new RegExp(not_first_file_str, "g"), file_id_ref_str);
+
+             var first_file_str = '_FIRST_FILE_REF_' + k;
+	     //console.log('first_file_str:',first_file_str);
+             select_str_xml = select_str_xml.replace(new RegExp(first_file_str, "g"), org_metas[k].file_xml);
+	   }
+	   //console.log('after replace, select_str_xml:',select_str_xml);
+	   global_select_str_xml = select_str_xml;
+
+           // write selected_str to text file
+           var a = document.getElementById('download_a');
+            if (summary_type == 'Cat') {
+	      a.href = "data:text/plain;charset=UTF-8," + encodeURIComponent(global_select_str_xml); // nb: must encode URI or won't save properly
+	    	a.download = label + '.xml';
+	    }
+	    a.click(); // fire click event
+	   
+	}
+
+	function writePremiereXML_cat(ids2, nodes, selected_nodes) {
+	    select_str_xml_template = `
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xmeml>
+<xmeml version="4">
+	<project>
+		<name>Vidd.ai selections</name>
+		<children>
+			_CLIP_STR
+		</children>
+	</project>
+</xmeml>
+`;
+	segment_list_xml = '';
+
+	// TODO:needs fps from meta
+        var fps = 30
+
+	file_reffed = {};
+        for (var i = 0; i < nodes.length; i++) {
+		ids2[i] = {"atom": nodes[i], "sec_start": all_nodes[nodes[i]].sec_start, "sec_end": all_nodes[nodes[i]].sec_end, "sec_len": all_nodes[nodes[i]].sec_len};
+		select_str += '\n' + fn + ',' + all_nodes[nodes[i]].sec_start.toString() + ',' + all_nodes[nodes[i]].sec_len.toString() + ';';
+
+	
+		// for inserting <file> info
+		var image_fn = grab_image_fn(selected_graph["nodes"][i].image_address);
+		if (! file_reffed[image_fn]) {
+			file_reffed[image_fn] = 1;
+			file_xml = '_FIRST_FILE_REF_' + image_fn;
+		} else {
+			file_xml = '_NOT_FIRST_FILE_REF_' + image_fn;
+		}
+		ref_file_xml = '_NOT_FIRST_FILE_REF_' + image_fn;
+
+		fcpxml = `
+<!-- start__SEGMENT -->
+			<clip id="_FN__SEGMENT" frameBlend="FALSE">
+				<masterclipid>_FN__SEGMENT</masterclipid>
+				<ismasterclip>TRUE</ismasterclip>
+				<rate>
+					<timebase>_ORG_FPS</timebase>
+				</rate>
+				<name>_SEGMENT__FN</name>
+				<media>
+					<video>
+						<track>
+							<clipitem id="clipitem-_FN__SEGMENT-v" frameBlend="FALSE">
+								<!-- subclip clip_len and offsets here -->
+                                                                <duration>_SEGMENT_CLIP_LEN</duration>
+                                                                <subclipinfo>
+                                                                        <startoffset>_SEGMENT_START</startoffset>
+                                                                        <endoffset>_SEGMENT_END</endoffset>
+                                                                </subclipinfo>
+								_ORG_FILE_INFO_HERE
+							</clipitem>
+						</track>
+					</video>
+					<audio>
+						<track>
+							<clipitem id="clipitem-_FN__SEGMENT-a" frameBlend="FALSE">
+                                                                <duration>_SEGMENT_CLIP_LEN</duration>
+								<sourcetrack>
+									<mediatype>audio</mediatype>
+									<trackindex>1</trackindex>
+								</sourcetrack>
+                                                                <subclipinfo>
+                                                                        <startoffset>_SEGMENT_START</startoffset>
+                                                                        <endoffset>_SEGMENT_END</endoffset>
+                                                                </subclipinfo>
+								_REF_FILE_INFO_HERE
+							</clipitem>
+						</track>
+					</audio>
+				</media>
+			</clip>
+<!-- end__SEGMENT -->
+`;
+		// replace in this order
+		fcpxml = fcpxml.replace(/_SEGMENT_START/g, all_nodes[nodes[i]].start_frame);
+		fcpxml = fcpxml.replace(/_SEGMENT_END/g, all_nodes[nodes[i]].start_frame + (all_nodes[nodes[i]].clip_len));
+		fcpxml = fcpxml.replace(/_SEGMENT_CLIP_LEN/g, (all_nodes[nodes[i]].clip_len));
+		fcpxml = fcpxml.replace(/_SEGMENT/g, 'seg_' + nodes[i]);
+		if (summary_type == 'Cat') {
+		  fcpxml = fcpxml.replace(/_FN/g, label); // label without special characters
+		} else {
+		  fcpxml = fcpxml.replace(/_FN/g, fn); // filename without special characters
+		}
+		fcpxml = fcpxml.replace(/_REF_FILE_INFO_HERE/g, ref_file_xml);
+		fcpxml = fcpxml.replace(/_ORG_FILE_INFO_HERE/g, file_xml);
+	        fcpxml = fcpxml.replace(/_ORG_FPS/g, fps);
+                segment_list_xml += fcpxml;
+
+        } // for
+	//console.log('segment_list_xml:',segment_list_xml);
+
+	select_str_xml = select_str_xml_template;
+	select_str_xml = select_str_xml.replace(/_ORG_FPS/g, fps);
+	select_str_xml = select_str_xml.replace(/_CLIP_STR/g, segment_list_xml);
+	//console.log('xml str:',select_str_xml);
+	global_select_str_xml = select_str_xml;
+	return(select_str_xml);
+        }
+
+	function writePremiereXML(ids2, nodes, org_meta) {
+            if (org_meta) {
+              //var meta = {...org_meta}; // spread syntax does not work for Safar 10.00 and less
+              var meta = org_meta;
+              console.log('meta:',meta);
+              // default settings for vidd_draft timelines
+              var _vidd_height = 1080;          // 1080p
+              var _vidd_width = 1920;
+              var _vidd_fps = 30;                       // 30 fps
+
+              // starting values for fcpxml sequence
+              prev_clip_end = -1;
+              fcpxml_offset = 108000; // equivalent of "3600/1s";
+              var f = meta.file_meta.file_fps.split("/");
+
+              var fps = (Number(f[0]) / Number(f[1])).toFixed(2);       // meta.file_fps expecting format "30000/1001" for 29.97 fps
+              meta.file_meta.file_fps = f[1] + '/' + f[0];                              // flip format into "1001/30000" for fcpxml
+
+              var fps_m = 1;
+
+              var fps_viddfps_ratio = Math.round(fps / _vidd_fps);
+
+              var sequence_duration = 0;
+              var fps = Math.round(fps) * fps_m;
+console.log('fps:',fps);
+
+              // grab fcpxml duration from nb_frames
+              if (meta.file_meta.nb_frames) {
+                meta.duration = (meta.file_meta.nb_frames * fps_m).toString() + '/' + fps;
+              } else {
+                var dur = meta.file_meta.duration;      // in seconds
+
+                // 2 statements below may be specific to fps = 59.94
+                var dur_frame = Math.round((Number(meta.file_meta.duration) * fps_5994_plus) / fps_refactor_m);
+                meta.duration = dur_frame.toString() + '/' + fps_5994_plus_denom;
+              }
+
+              meta.file_start_time = '0/1';             // default asset start_time
+
+              // overwrite asset start_frame from timecode if it's there
+              var start_frame = 0;
+              if ("file_timecode" in meta.file_meta) {
+                var t = meta.file_meta.file_timecode.toString().split(":");
+                var hr = Number(t[0]) * 108000;
+                var min = Number(t[1]) * 1800;
+                var sec = Number(t[2]) * 30;
+                start_frame = hr + min + sec + Number(t[3]);
+                meta.file_start_time = (start_frame * fps_m).toString() + '/' + fps;
+              }
+	      select_str_xml = `
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xmeml>
+<xmeml version="4">
+	<project>
+		<name>Vidd.ai selections</name>
+		<children>
+			_CLIP_STR
+		</children>
+	</project>
+</xmeml>
+`;
+	      org_file_info_xml = `
+								<!--- specify if first ref to file -->
+								<file id="file-org">
+									<pathurl>file://localhost_ORG_PATH/_ORG_FN_EXT</pathurl>
+									<rate>
+										<timebase>_ORG_FPS</timebase>
+									</rate>
+									<duration>_FILE_NUM_FRAMES</duration>
+									<timecode>
+										<rate>
+											<timebase>_ORG_FPS</timebase>
+										</rate>
+										<string>00:00:00:00</string>
+										<frame>0</frame>
+										<displayformat>NDF</displayformat>
+										<reel>
+											<name></name>
+										</reel>
+									</timecode>
+									<media>
+										<video>
+											<duration>_FILE_NUM_FRAMES</duration>
+											<samplecharacteristics>
+												<rate>
+													<timebase>_ORG_FPS</timebase>
+												</rate>
+												<width>_WIDTH</width>
+												<height>_HEIGHT</height>
+												<anamorphic>FALSE</anamorphic>
+												<pixelaspectratio>square</pixelaspectratio>
+												<fielddominance>none</fielddominance>
+											</samplecharacteristics>
+										</video>
+										<audio>
+											<samplecharacteristics>
+												<depth>16</depth>
+												<samplerate>44100</samplerate>
+											</samplecharacteristics>
+											<channelcount>2</channelcount>
+										</audio>
+									</media>
+								</file>
+`;
+              org_file_info_xml = org_file_info_xml.replace(/_ORG_PATH/g, meta.path);
+              org_file_info_xml = org_file_info_xml.replace(/_ORG_FN_EXT/g, meta.fn_ext);
+	      org_file_info_xml = org_file_info_xml.replace(/_ORG_FPS/g, fps);
+              org_file_info_xml = org_file_info_xml.replace(/_HEIGHT/g, meta.file_meta.height);
+              org_file_info_xml = org_file_info_xml.replace(/_WIDTH/g, meta.file_meta.width);
+              org_file_info_xml = org_file_info_xml.replace(/_FILE_NUM_FRAMES/g, meta.file_meta.nb_frames);
+		
+	    segment_list_xml = '';
+            for (var i = 0; i < nodes.length; i++) {
+		ids2[i] = {"atom": nodes[i], "sec_start": all_nodes[nodes[i]].sec_start, "sec_end": all_nodes[nodes[i]].sec_end, "sec_len": all_nodes[nodes[i]].sec_len};
+		select_str += '\n' + fn + ',' + all_nodes[nodes[i]].sec_start.toString() + ',' + all_nodes[nodes[i]].sec_len.toString() + ';';
+
+	
+	       if (org_meta) {
+                if (nodes[i] > 0) {
+                  prev_clip_name = all_nodes[nodes[i] - 1].name;
+                  prev_clip_end = prev_clip_name.split('.')[2]
+console.log('grabbing prev_clip_name, i:',i, ' :name:',prev_clip_name, ' :prev_clip_end:',prev_clip_end);
+                }
+		// for inserting <file> info
+		if (i == 0) {
+			file_xml = org_file_info_xml;
+		} else {
+			file_xml = '<file id="file-org"/>';
+		}
+
+		fcpxml = `
+<!-- start__SEGMENT -->
+			<clip id="_FN__SEGMENT" frameBlend="FALSE">
+				<masterclipid>_FN__SEGMENT</masterclipid>
+				<ismasterclip>TRUE</ismasterclip>
+				<rate>
+					<timebase>_ORG_FPS</timebase>
+				</rate>
+				<name>_SEGMENT__FN</name>
+				<media>
+					<video>
+						<track>
+							<clipitem id="clipitem-_FN__SEGMENT-v" frameBlend="FALSE">
+								<!-- subclip clip_len and offsets here -->
+                                                                <duration>_SEGMENT_CLIP_LEN</duration>
+                                                                <subclipinfo>
+                                                                        <startoffset>_SEGMENT_START</startoffset>
+                                                                        <endoffset>_SEGMENT_END</endoffset>
+                                                                </subclipinfo>
+								_ORG_FILE_INFO_HERE
+							</clipitem>
+						</track>
+					</video>
+					<audio>
+						<track>
+							<clipitem id="clipitem-_FN__SEGMENT-a" frameBlend="FALSE">
+								<file id="file-org"/>
+                                                                <duration>_SEGMENT_CLIP_LEN</duration>
+								<sourcetrack>
+									<mediatype>audio</mediatype>
+									<trackindex>1</trackindex>
+								</sourcetrack>
+                                                                <subclipinfo>
+                                                                        <startoffset>_SEGMENT_START</startoffset>
+                                                                        <endoffset>_SEGMENT_END</endoffset>
+                                                                </subclipinfo>
+							</clipitem>
+						</track>
+					</audio>
+				</media>
+			</clip>
+<!-- end__SEGMENT -->
+`;
+		// replace in this order
+		fcpxml = fcpxml.replace(/_SEGMENT_START/g, Number(prev_clip_end) + 1);
+		fcpxml = fcpxml.replace(/_SEGMENT_END/g, Number(prev_clip_end) + (all_nodes[nodes[i]].clip_len));
+		fcpxml = fcpxml.replace(/_SEGMENT_CLIP_LEN/g, (all_nodes[nodes[i]].clip_len));
+		//fcpxml = fcpxml.replace(/_SEGMENT_OFFSET/g, fcpxml_offset);
+		fcpxml = fcpxml.replace(/_SEGMENT/g, 'seg_' + nodes[i]);
+		fcpxml = fcpxml.replace(/_FN/g, fn); // filename without special characters
+		fcpxml = fcpxml.replace(/_ORG_FILE_INFO_HERE/g, file_xml);
+	        fcpxml = fcpxml.replace(/_ORG_FPS/g, fps);
+		//fcpxml_offset += all_nodes[nodes[i]].clip_len + 1;
+                segment_list_xml += fcpxml;
+	       } // if (org_meta)
+            } // for
+//console.log('segment_list_xml:',segment_list_xml);
+
+	      select_str_xml = select_str_xml.replace(/_ORG_FPS/g, fps);
+	      select_str_xml = select_str_xml.replace(/_CLIP_STR/g, segment_list_xml);
+	      select_str_xml = select_str_xml.replace(/_ORG_FN_DECODED/g, decodeURIComponent(meta.fn_ext));
+              select_str_xml = select_str_xml.replace(/_SEQUENCE_DURATION/g, sequence_duration);
+
+
+		console.log('xml str:',select_str_xml);
+		//console.log('xml str:',org_file_info_xml);
+		return(select_str_xml);
+
+	   }	// if org_meta
+
+        }
 
 	function writeTimeline(ids2, nodes, org_meta) {
 console.log('in writeTimeline, org_meta:',org_meta);
@@ -621,11 +1117,22 @@ console.log('in writeTimeline, org_meta:',org_meta);
 	    } // if (org_meta)
 	}
 
+
         d3.select('#Send').on('click', function () {
             var ids2 = {};
             var nodes = [...select_set];
 
-	    writeTimeline(ids2, nodes, org_meta);
+            if (summary_type == 'Cat') {
+	      grab_meta_called_times = 0;
+	      grabCatMetas(selected_graph["nodes"]);
+	      var select_str_xml = writePremiereXML_cat(ids2, nodes, selected_graph["nodes"]);
+	    }
+
+	    // for fcpxml, commented out for DR
+	    //writeTimeline(ids2, nodes, org_meta);
+            if (summary_type == 'File') {
+	      var select_str_xml = writePremiereXML(ids2, nodes, org_meta);
+	    } 
 
 	    //console.log('select_str:',select_str);
 
@@ -635,17 +1142,28 @@ console.log('in writeTimeline, org_meta:',org_meta);
 	    // default to edl
 	    a.href = "data:text/plain;charset=UTF-8," + encodeURIComponent(select_str); // nb: must encode URI or won't save properly
 	    a.download = fn + '.edl';
+            if (summary_type == 'Cat') {
+	    	a.download = label + '.edl';
+	    }
 
 	    // overwrite if fcpxml 
 	    if (org_meta) {
-	      a.href = "data:text/plain;charset=UTF-8," + encodeURIComponent(select_str_fcpxml); // nb: must encode URI or won't save properly
-	      a.download = fn + '.fcpxml';
+	      a.href = "data:text/plain;charset=UTF-8," + encodeURIComponent(select_str_xml); // nb: must encode URI or won't save properly
+	      //a.download = fn + '.fcpxml';
+	      a.download = fn + '.xml';
+              if (summary_type == 'Cat') {
+	    	//a.download = label + '.fcpxml';
+	    	a.download = label + '.xml';
+	      }
 	    }
-	    a.click(); // fire click event
-	    select_str = '# mpv EDL v0;'; // reset 
+
+            if (summary_type == 'File') {
+	      a.click(); // fire click event
+	      select_str = '# mpv EDL v0;'; // reset 
+	    }
 
 	    // save selected on server
-	    var surl = 'http://stream.vidd.ai/receiveSelected.php?u=' + user + '&fn=' + fn;
+	    var surl = 'https://stream.vidd.ai/receiveSelected.php?u=' + user + '&fn=' + fn;
 	    console.log('ids2', ids2);
 
             $.ajax({
@@ -680,7 +1198,7 @@ console.log('in writeTimeline, org_meta:',org_meta);
 	    select_str = '# mpv EDL v0;'; // reset 
 
 	    // save selected on server
-	    var surl = 'http://stream.vidd.ai/receiveSelected.php?u=' + user + '&fn=' + fn;
+	    var surl = 'https://stream.vidd.ai/receiveSelected.php?u=' + user + '&fn=' + fn;
 	    console.log('ids2', ids2);
 
             $.ajax({
@@ -705,27 +1223,34 @@ console.log('in writeTimeline, org_meta:',org_meta);
     <button id="HasFace">Has Face</button>
 -->
     <button id="vary">Suggested segments</button>
+    <button id="hits" style="display:none">Hits</button>
+    <button id="hits_maybe" style="display:none">Maybes</button>
+    <button id="long">Longest</button>
+    <button id="longish" style="display:none">Longish</button>
+    <button id="shortish" style="display:none">Shortish</button>
+    <button id="short" >Shortest</button>
+    <button id="all" >All</button>
+    &nbsp;&nbsp;&nbsp;
+<!-- enable for demo
+    <button id="vary disabled">Suggested segments</button>
     <button id="hits" disabled style="display:none">Hits</button>
     <button id="hits_maybe" disabled style="display:none">Maybes</button>
     <button id="long" disabled>Longest</button>
     <button id="longish" disabled style="display:none">Longish</button>
     <button id="shortish" disabled style="display:none">Shortish</button>
-    <button id="short" disabled>Shortest</button>
-    <button id="all">All</button>
+    <button id="short" disabled >Shortest</button>
+    <button id="all"disabled  >All</button>
     &nbsp;&nbsp;&nbsp;
+-->
     |
     &nbsp;&nbsp;&nbsp;
-    <button id="Selected" disabled class="btn btn-outline-light" data-toggle="button">Show selected</button>
+    <button id="Selected" class="btn btn-outline-light" data-toggle="button">Show selected</button>
     <button id="Send" disabled>Save Selected</button>
     <a class="btn btn-info" id="download_a" href="" download="filename.edl" style="display:none">Download</a>
     &nbsp;&nbsp;&nbsp;
-    |
-    &nbsp;&nbsp;&nbsp;
-<!--
-    <button id="categoryMap">Category map</button>
-    <button id="fileMap">File map</button>
+<!-- enable for demo
+    <span class="text .navbar-fixed-bottom">&copy; <a href="https://Vidd.ai" target="_blank">Vidd.ai</a>&nbsp;&nbsp;All rights reserved</span>
 -->
-    <button id="VIDD">Vidd.ai</button>
     <br /><br />
 </div>
 

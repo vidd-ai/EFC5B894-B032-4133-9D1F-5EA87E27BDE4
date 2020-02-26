@@ -96,9 +96,11 @@ if (summary_type.match(/cat/i)) {
 }
 
 var force = d3.layout.force()
-    .linkDistance(40)
+    //.linkDistance(40)
     //.linkDistance(25)
-    .charge(-60)
+    .charge(function(d) { return d._children ? -d.size / 100 : -60; })
+    .linkDistance(function(d) { return d.target._children ? 80 : 40; })
+    //.charge(-60)
     .gravity(.05)
     .size([width, height])
     .on("tick", tick);
@@ -119,6 +121,10 @@ d3.json(fn, function(error, json) {
   if (error) throw error;
 
   root = json;
+  // TODO:try
+  root.fixed = true;
+  root.x = width / 2;
+  root.y = height / 2 + 30;
   update();
 });
 

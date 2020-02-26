@@ -1,4 +1,6 @@
 name,count,label
+Action,32,action
+Up close,9,up_close
 Product,15,product
 Child,25,child
 Skin,5,skin
